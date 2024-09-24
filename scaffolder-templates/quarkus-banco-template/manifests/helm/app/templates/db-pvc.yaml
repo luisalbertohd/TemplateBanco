@@ -1,0 +1,15 @@
+{{- if and (.Values.db.enable) (eq .Values.environment "dev") }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    template: postgresql-persistent-template
+  name: ${{values.deployment_name}}-db-pvc
+  namespace: "{{ .Values.namespace.name }}"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+{{- end }}

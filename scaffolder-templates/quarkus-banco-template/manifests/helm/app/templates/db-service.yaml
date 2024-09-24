@@ -1,0 +1,24 @@
+{{- if and (.Values.db.enable) (eq .Values.environment "dev") }}
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    template.openshift.io/expose-uri: postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}
+  labels:
+    template: postgresql-persistent-template
+  name: ${{values.deployment_name}}-db
+  namespace: "{{ .Values.namespace.name }}"
+spec:
+  ports:
+  - name: postgresql
+    nodePort: 0
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    name: ${{values.deployment_name}}-db
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+{{- end }}
